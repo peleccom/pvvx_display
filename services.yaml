@@ -1,0 +1,53 @@
+show:
+  fields:
+    address:
+      required: true
+      example: "A4:C1:38:12:34:56"
+      selector:
+        text:
+    big_number:
+      required: true
+      example: 23.5
+      selector:
+        number:
+          step: 0.1
+    small_number:
+      required: true
+      example: 55
+      selector:
+        number:
+          min: 0
+          max: 999
+    unit:
+      required: false
+      default: none
+      selector:
+        select:
+          options: [none, deg_c, deg_f, minus, lines, lowdash, deg_ghe, deg_e]
+    happy:
+      required: false
+      selector:
+        boolean: {}
+    sad:
+      required: false
+      selector:
+        boolean: {}
+    bracket:
+      required: false
+      selector:
+        boolean: {}
+    percent:
+      required: false
+      selector:
+        boolean: {}
+    battery:
+      required: false
+      selector:
+        boolean: {}
+    validity:
+      required: false
+      default: 300
+      selector:
+        number:
+          min: 1
+          max: 65535

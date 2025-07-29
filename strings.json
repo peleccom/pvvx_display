@@ -1,0 +1,58 @@
+{
+  "title": "PVVX Display",
+  "config": {
+    "flow_title": "PVVX Display: {name}",
+    "step": {
+      "bluetooth_confirm": {
+        "title": "PVVX custom display control",
+        "description": "This is a control-only integration for devices running PVVX firmware:\n- Writes custom display (Big/Small/Icons) via GATT\n- Creates no sensors and coexists with BTHome\n\nDevice: {name} ({address}).",
+        "data": {}
+      },
+      "user": {
+        "title": "Add PVVX Display",
+        "description": "Enter the device address to enable custom display control (no sensors, BTHome-friendly).",
+        "data": {
+          "address": "Device MAC (e.g., A4:C1:38:12:34:56)"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This device is already configured.",
+      "no_pvvx": "PVVX display service not found."
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the device.",
+      "invalid_address": "Invalid address."
+    }
+  },
+  "services": {
+    "show": {
+      "name": "Show display",
+      "description": "Write custom content (Big/Small/Icons) to the PVVX Mi Thermometer via BLE (GATT). Coexists with BTHome; no sensors are created.",
+      "fields": {
+        "address": { "name": "Device address", "description": "BLE MAC address of the target device." },
+        "big_number": { "name": "Big number", "description": "Main number on the LCD (x10 internally, e.g., 23.5 → 235)." },
+        "small_number": { "name": "Small number", "description": "Auxiliary number (e.g., humidity)." },
+        "unit": { "name": "Unit/flags", "description": "Unit/flags encoded into config bits (deg_c/deg_f/percent/...)." },
+        "happy": { "name": "Happy icon", "description": "Show the happy face icon." },
+        "sad": { "name": "Sad icon", "description": "Show the sad face icon." },
+        "bracket": { "name": "Bracket", "description": "Show brackets around the small number." },
+        "percent": { "name": "Percent", "description": "Render percent sign with the small number." },
+        "battery": { "name": "Battery icon", "description": "Show the battery icon." },
+        "validity": { "name": "Validity (seconds)", "description": "How long the custom content should be displayed." }
+      }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "show": "Show custom display"
+    },
+    "extra_fields": {
+      "big_number": "Big number",
+      "small_number": "Small number",
+      "icon": "Icon",
+      "unit": "Unit",
+      "validity": "Validity (seconds)"
+    }
+  }
+}

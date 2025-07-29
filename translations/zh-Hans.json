@@ -1,0 +1,58 @@
+{
+  "title": "PVVX 显示控制",
+  "config": {
+    "flow_title": "PVVX 显示控制：{name}",
+    "step": {
+      "bluetooth_confirm": {
+        "title": "PVVX 固件的自定义显示控制",
+        "description": "这是针对 PVVX 固件的**控制型**集成：\n- 通过 GATT 写入自定义显示（Big/Small/Icons）\n- 不创建传感器实体，可与 BTHome 共存\n\n设备：{name}（{address}）。",
+        "data": {}
+      },
+      "user": {
+        "title": "添加 PVVX 显示控制",
+        "description": "输入设备地址以启用自定义显示控制（不创建传感器，兼容 BTHome）。",
+        "data": {
+          "address": "设备 MAC（例如 A4:C1:38:12:34:56）"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "该设备已配置。",
+      "no_pvvx": "未检测到 PVVX 显示服务。"
+    },
+    "error": {
+      "cannot_connect": "无法连接到设备。",
+      "invalid_address": "地址无效。"
+    }
+  },
+  "services": {
+    "show": {
+      "name": "显示自定义内容",
+      "description": "通过 BLE GATT 向 PVVX Mi Thermometer 写入自定义显示（大/小数字与图标）. 与 BTHome 共存，不创建传感器实体.",
+      "fields": {
+        "address": { "name": "设备地址", "description": "目标设备的 BLE MAC 地址." },
+        "big_number": { "name": "大数字", "description": "LCD 主显示数字（内部按 x10 编码，如 23.5 → 235）." },
+        "small_number": { "name": "小数字", "description": "辅助数字（如湿度）." },
+        "unit": { "name": "单位/标志", "description": "编码到配置位的单位/标志（deg_c/deg_f/percent 等）." },
+        "happy": { "name": "笑脸图标", "description": "显示笑脸图标." },
+        "sad": { "name": "难过图标", "description": "显示难过图标." },
+        "bracket": { "name": "括号", "description": "为小数字显示括号." },
+        "percent": { "name": "百分号", "description": "为小数字显示百分号." },
+        "battery": { "name": "电池图标", "description": "显示电池图标." },
+        "validity": { "name": "显示时长（秒）", "description": "自定义内容保持显示的时间长度." }
+      }
+    }
+  },
+  "device_automation": {
+    "action_type": {
+      "show": "显示自定义内容"
+    },
+    "extra_fields": {
+      "big_number": "大号数字",
+      "small_number": "小号数字",
+      "icon": "图标",
+      "unit": "单位",
+      "validity": "有效期（秒）"
+    }
+  }
+}
