@@ -26,6 +26,24 @@ this integration **coexists perfectly with the official `BTHome` passive broadca
 
 ## 📦 Installation
 
+### HACS (Recommended)
+
+Install in HACS with button:
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Angelic47&repository=pvvx_display&category=integration)
+
+or
+
+1. Open HACS in Home Assistant
+1. Go to "Integrations"
+1. Click the three dots in the top right and select "Custom repositories"
+1. Add this repository URL: https://github.com/Angelic47/pvvx_display
+Select category "Integration"
+Click "Install"
+Restart Home Assistant
+
+# Manual installation
+
 > Recommended: Clone directly into your Home Assistant custom components directory
 
 ```bash
@@ -69,7 +87,7 @@ This integration registers a service called `pvvx_display.show`.
 * Can be used via *Developer Tools > Services* or within automations and scripts
 * You can specify the device address and display contents directly
 
-> 💡 Supported parameters are listed in `services.yaml`,  
+> 💡 Supported parameters are listed in `services.yaml`,
 > or search for `pvvx_display.show` in the Developer Tools UI for schema details.
 
 ### 2. Automation Action
