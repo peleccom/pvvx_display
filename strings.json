@@ -25,22 +25,30 @@
       "invalid_address": "Invalid address."
     }
   },
-  "services": {
+    "services": {
     "show": {
       "name": "Show display",
-      "description": "Write custom content (Big/Small/Icons) to the PVVX Mi Thermometer via BLE (GATT). Coexists with BTHome; no sensors are created.",
+      "description": "Write custom content (Big/Small/Icons) to PVVX Mi Thermometer via BLE (GATT). Coexists with BTHome; no sensors are created.",
       "fields": {
-        "address": { "name": "Device address", "description": "BLE MAC address of the target device." },
-        "big_number": { "name": "Big number", "description": "Main number on the LCD (x10 internally, e.g., 23.5 → 235)." },
+        "address": { "name": "Device address", "description": "BLE MAC address of target device." },
+        "big_number": { "name": "Big number", "description": "Main number on LCD (x10 internally, e.g., 23.5 → 235)." },
         "small_number": { "name": "Small number", "description": "Auxiliary number (e.g., humidity)." },
         "unit": { "name": "Unit/flags", "description": "Unit/flags encoded into config bits (deg_c/deg_f/percent/...)." },
-        "happy": { "name": "Happy icon", "description": "Show the happy face icon." },
-        "sad": { "name": "Sad icon", "description": "Show the sad face icon." },
-        "bracket": { "name": "Bracket", "description": "Show brackets around the small number." },
-        "percent": { "name": "Percent", "description": "Render percent sign with the small number." },
-        "battery": { "name": "Battery icon", "description": "Show the battery icon." },
-        "validity": { "name": "Validity (seconds)", "description": "How long the custom content should be displayed." }
+        "happy": { "name": "Happy icon", "description": "Show happy face icon." },
+        "sad": { "name": "Sad icon", "description": "Show sad face icon." },
+        "bracket": { "name": "Bracket", "description": "Show brackets around small number." },
+        "percent": { "name": "Percent", "description": "Render percent sign with small number." },
+        "battery": { "name": "Battery icon", "description": "Show battery icon." },
+        "validity": { "name": "Validity (seconds)", "description": "How long to display custom content." }
       }
+    },
+    "sync_time": {
+      "name": "Sync time",
+      "description": "Sync Home Assistant time to PVVX display via BLE.",
+      "fields": {
+        "address": { "name": "Device address", "description": "BLE MAC address of target device." }
+      }
+    }
     }
   },
   "device_automation": {

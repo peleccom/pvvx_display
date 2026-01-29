@@ -10,14 +10,16 @@ show:
       example: 23.5
       selector:
         number:
+          min: -99.5
+          max: 1999.5
           step: 0.1
     small_number:
       required: true
       example: 55
       selector:
         number:
-          min: 0
-          max: 999
+          min: -9
+          max: 99
     unit:
       required: false
       default: none
@@ -51,3 +53,10 @@ show:
         number:
           min: 1
           max: 65535
+sync_time:
+  fields:
+    address:
+      required: true
+      example: "A4:C1:38:12:34:56"
+      selector:
+        text:

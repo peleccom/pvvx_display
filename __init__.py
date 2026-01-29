@@ -1,4 +1,4 @@
-#coding: utf-8
+# coding: utf-8
 
 from __future__ import annotations
 
@@ -9,9 +9,11 @@ from .const import DOMAIN, CONF_ADDRESS
 
 PLATFORMS: list = []  # 这里不挂平台，不创建实体；只注册服务
 
+
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     # 注册服务：pvvx_display.show 在 setup_entry 里完成（确保有 entry）
     return True
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     address: str = entry.data[CONF_ADDRESS]
@@ -23,36 +25,47 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         connections={(dr.CONNECTION_BLUETOOTH, address)},
         manufacturer="Xiaomi / PVVX",
         name=f"PVVX Display ({address})",
-        model="LYWSD03MMC (PVVX)"
+        model="LYWSD03MMC (PVVX)",
     )
 
     # 延后注册服务，确保至少有一个 entry
     async def _unregister_services():
         try:
             hass.services.async_remove(DOMAIN, "show")
+            hass.services.async_remove(DOMAIN, "sync_time")
         except Exception:
             pass
 
-    from .client import async_show_display
+    from .client import async_show_display, async_sync_time
+
+    async def handle_sync_time_service(call):
+        await async_sync_time(hass, call.data["address"])
 
     async def handle_show_service(call):
-        await async_show_display(hass, address=call.data["address"],
-                                 big=call.data.get("big_number"),
-                                 small=call.data.get("small_number"),
-                                 unit=call.data.get("unit", "none"),
-                                 happy=call.data.get("happy", False),
-                                 sad=call.data.get("sad", False),
-                                 bracket=call.data.get("bracket", False),
-                                 percent=call.data.get("percent", False),
-                                 battery=call.data.get("battery", False),
-                                 validity=call.data.get("validity", 300))
+        await async_show_display(
+            hass,
+            address=call.data["address"],
+            big=call.data.get("big_number"),
+            small=call.data.get("small_number"),
+            unit=call.data.get("unit", "none"),
+            happy=call.data.get("happy", False),
+            sad=call.data.get("sad", False),
+            bracket=call.data.get("bracket", False),
+            percent=call.data.get("percent", False),
+            battery=call.data.get("battery", False),
+            validity=call.data.get("validity", 300),
+        )
 
     # 只注册一次
     if not hass.services.has_service(DOMAIN, "show"):
         hass.services.async_register(DOMAIN, "show", handle_show_service)
 
+    if not hass.services.has_service(DOMAIN, "sync_time"):
+        hass.services.async_register(DOMAIN, "sync_time", handle_sync_time_service)
+
     entry.async_on_unload(_unregister_services)
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
