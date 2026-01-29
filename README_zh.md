@@ -10,7 +10,7 @@
 
 ## 🕊️ 简介
 
-本集成为 Home Assistant 用户提供了对 **PVVX 固件版小米蓝牙温湿度计** 的 **显示内容控制能力**。  
+本集成为 Home Assistant 用户提供了对 **PVVX 固件版小米蓝牙温湿度计** 的 **显示内容控制能力**。
 支持通过自动化、脚本等方式，发送GATT自定义显示命令，自定义设备上的：
 
 * 主显示数字（`BigNumber`）
@@ -18,7 +18,7 @@
 * 图标（`Icons`）
 * 显示有效期（`Validity`）
 
-*✨ 本集成基于 Home Assistant 自带的 Bluetooth Framework（`habluetooth`、`bleak`），*  
+*✨ 本集成基于 Home Assistant 自带的 Bluetooth Framework（`habluetooth`、`bleak`），*
 *兼容官方 `BTHome` 被动广播数据接收方式，集成并存运行，不产生冲突。*
 
 
@@ -28,7 +28,7 @@
 
 ```bash
 cd /config/custom_components
-git clone https://github.com/Angelic47/pvvx_display.git
+git clone https://github.com/peleccom/pvvx_display.git
 ```
 
 或将本仓库打包为 `.zip` 后解压至 `custom_components/pvvx_display` 目录下。
@@ -63,7 +63,7 @@ git clone https://github.com/Angelic47/pvvx_display.git
 * 集成将注册一个名为 `pvvx_display.show` 的服务，
 * 可在`开发者工具 > 服务`中调用，或用于脚本 / 自动化中。
 
-> 💡 支持的参数详见 `services.yaml` ，  
+> 💡 支持的参数详见 `services.yaml` ，
 > 或者在`开发者工具 > 服务`中搜索 `pvvx_display.show` ，查看详情.
 
 ### 2. 自动化动作

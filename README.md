@@ -30,7 +30,7 @@ this integration **coexists perfectly with the official `BTHome` passive broadca
 
 Install in HACS with button:
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Angelic47&repository=pvvx_display&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=peleccom&repository=pvvx_display&category=integration)
 
 or
 
