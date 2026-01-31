@@ -1,7 +1,10 @@
 show:
+  target:
+      entity:
+        domain: pvvx_display
   fields:
     address:
-      required: true
+      required: false
       example: "A4:C1:38:12:34:56"
       selector:
         text:
@@ -54,9 +57,12 @@ show:
           min: 1
           max: 65535
 sync_time:
+  target:
+      entity:
+        domain: pvvx_display
   fields:
     address:
-      required: true
+      required: false
       example: "A4:C1:38:12:34:56"
       selector:
         text:

@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers import device_registry as dr
+from homeassistant.exceptions import ServiceValidationError
 from .const import DOMAIN, CONF_ADDRESS
 
 PLATFORMS: list = []  # 这里不挂平台，不创建实体；只注册服务
@@ -13,6 +14,31 @@ PLATFORMS: list = []  # 这里不挂平台，不创建实体；只注册服务
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     # 注册服务：pvvx_display.show 在 setup_entry 里完成（确保有 entry）
     return True
+
+
+def _get_address_from_target(hass: HomeAssistant, call: ServiceCall) -> str:
+    """Extract BLE address from device target or return provided address."""
+    # Check if address is directly provided
+    if address := call.data.get("address"):
+        return address.upper()
+
+    # Check for device target
+    if device_id := call.target.get("device_id"):
+        if isinstance(device_id, list):
+            device_id = device_id[0] if device_id else None
+
+        if device_id:
+            dev_reg = dr.async_get(hass)
+            device = dev_reg.async_get(device_id)
+            if device:
+                # Look for Bluetooth MAC in connections
+                for conn_type, conn_id in device.connections:
+                    if conn_type == dr.CONNECTION_BLUETOOTH:
+                        return conn_id.upper()
+
+    raise ServiceValidationError(
+        "Either select a device target or provide a MAC address"
+    )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -38,13 +64,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     from .client import async_show_display, async_sync_time
 
-    async def handle_sync_time_service(call):
-        await async_sync_time(hass, call.data["address"])
+    async def handle_sync_time_service(call: ServiceCall):
+        target_address = _get_address_from_target(hass, call)
+        await async_sync_time(hass, target_address)
 
-    async def handle_show_service(call):
+    async def handle_show_service(call: ServiceCall):
+        target_address = _get_address_from_target(hass, call)
         await async_show_display(
             hass,
-            address=call.data["address"],
+            address=target_address,
             big=call.data.get("big_number"),
             small=call.data.get("small_number"),
             unit=call.data.get("unit", "none"),
