@@ -1,6 +1,7 @@
-#coding: utf-8
+# coding: utf-8
 
 from __future__ import annotations
+from contextlib import asynccontextmanager
 import struct
 from datetime import datetime, timezone
 
@@ -9,10 +10,15 @@ import logging
 from homeassistant.core import HomeAssistant
 from homeassistant.components import bluetooth
 from homeassistant.exceptions import HomeAssistantError
-from bleak_retry_connector import establish_connection, BleakClientWithServiceCache, BleakNotFoundError
+from bleak_retry_connector import (
+    establish_connection,
+    BleakClientWithServiceCache,
+    BleakNotFoundError,
+)
 from bleak import BleakError
 
 from .const import PVVX_SERVICE_UUID, PVVX_CHAR_UUID
+from datetime import datetime, timezone
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,20 +34,30 @@ UNIT_BITS = {
     "deg_e": 7,
 }
 
+
 def _build_cfg(unit, happy, sad, bracket, percent, battery):
     cfg = 0
-    if happy:   cfg |= 1 << 0
-    if sad:     cfg |= 1 << 1
-    if bracket: cfg |= 1 << 2
-    if percent: cfg |= 1 << 3
-    if battery: cfg |= 1 << 4
+    if happy:
+        cfg |= 1 << 0
+    if sad:
+        cfg |= 1 << 1
+    if bracket:
+        cfg |= 1 << 2
+    if percent:
+        cfg |= 1 << 3
+    if battery:
+        cfg |= 1 << 4
     u = UNIT_BITS.get(unit or "none", 0) & 0x7
     cfg = (cfg & 0x1F) | (u << 5)
     return cfg
 
-async def _connect(hass: HomeAssistant, address: str) -> BleakClientWithServiceCache:
+
+@asynccontextmanager
+async def get_client(hass: HomeAssistant, address: str) -> BleakClientWithServiceCache:
     # 从 HA 获取可连接的 BLEDevice，再用 bleak-retry-connector 稳定建立连接
-    ble_device = bluetooth.async_ble_device_from_address(hass, address, connectable=True)
+    ble_device = bluetooth.async_ble_device_from_address(
+        hass, address, connectable=True
+    )
     if not ble_device:
         if bluetooth.async_address_present(hass, address, connectable=False):
             raise HomeAssistantError(
@@ -57,9 +73,8 @@ async def _connect(hass: HomeAssistant, address: str) -> BleakClientWithServiceC
             BleakClientWithServiceCache,
             ble_device,
             name=f"pvvx_display:{address}",
-            timeout=10
+            timeout=10,
         )
-        return client
     except BleakNotFoundError as e:
         # 常见于后端没有空闲连接槽/瞬时走丢
         _LOGGER.debug("BleakNotFoundError while connecting to %s: %s", address, e)
@@ -69,27 +84,55 @@ async def _connect(hass: HomeAssistant, address: str) -> BleakClientWithServiceC
         ) from e
     except BleakError as e:
         _LOGGER.debug("BleakError while connecting to %s: %s", address, e)
-        raise HomeAssistantError(f"Bluetooth error while connecting to {address}: {e}") from e
+        raise HomeAssistantError(
+            f"Bluetooth error while connecting to {address}: {e}"
+        ) from e
     except asyncio.TimeoutError as e:
         raise HomeAssistantError(f"Timed out connecting to {address} (10s)") from e
+    else:
+        try:
+            yield client
+        finally:
+            await client.disconnect()
+
 
 async def async_show_display(
     hass: HomeAssistant,
     address: str,
-    big: float, small: int, unit: str,
-    happy: bool, sad: bool, bracket: bool, percent: bool, battery: bool,
-    validity: int
+    big: float,
+    small: int,
+    unit: str,
+    happy: bool,
+    sad: bool,
+    bracket: bool,
+    percent: bool,
+    battery: bool,
+    validity: int,
 ):
-    client = await _connect(hass, address)
-    try:
+    async with get_client(hass, address) as client:
         # 按 ESPHome 实现：首字节 0x22，随后 bignum(×10, uint16 LE)、smallnum(uint16 LE)、
         # 有效期(uint16 LE)、cfg(uint8)
         bign = int(round((big or 0) * 10))
         smal = int(small or 0) & 0xFFFF
         vali = int(validity or 300) & 0xFFFF
-        cfg  = _build_cfg(unit, happy, sad, bracket, percent, battery) & 0xFF
+        cfg = _build_cfg(unit, happy, sad, bracket, percent, battery) & 0xFF
 
         payload = struct.pack("<BHHHB", 0x22, bign & 0xFFFF, smal, vali, cfg)
         await client.write_gatt_char(PVVX_CHAR_UUID, payload, response=False)
-    finally:
-        await client.disconnect()
+
+
+async def async_sync_time(hass: HomeAssistant, address: str):
+    """Sync Home Assistant time to PVVX display"""
+    async with get_client(hass, address) as client:
+        # Get current time from Home Assistant
+        now = datetime.now(timezone.utc).astimezone().replace(tzinfo=timezone.utc)
+
+        # ESPHome PVVX time sync format: Unix timestamp (4 bytes, little-endian)
+        # Send as command 0x23 with timestamp
+        timestamp = int(now.timestamp())
+
+        # Pack as little-endian 32-bit unsigned integer
+        payload = struct.pack("<BI", 0x23, timestamp)
+
+        await client.write_gatt_char(PVVX_CHAR_UUID, payload, response=False)
+        _LOGGER.info("Time synced to PVVX device %s: %s", address, now.isoformat())

@@ -69,8 +69,14 @@ This integration registers a service called `pvvx_display.show`.
 * Can be used via *Developer Tools > Services* or within automations and scripts
 * You can specify the device address and display contents directly
 
-> 💡 Supported parameters are listed in `services.yaml`,  
+> 💡 Supported parameters are listed in `services.yaml`,
 > or search for `pvvx_display.show` in the Developer Tools UI for schema details.
+
+This integration also registers a service called `pvvx_display.sync_time`.
+
+* Can be used via *Developer Tools > Services* or within automations and scripts
+* Synchronizes Home Assistant time to the PVVX device via BLE
+* Supports specifying the device address directly
 
 ### 2. Automation Action
 

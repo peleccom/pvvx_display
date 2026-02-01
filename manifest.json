@@ -17,6 +17,10 @@
     {
       "service_uuid": "00001f10-0000-1000-8000-00805f9b34fb",
       "connectable": true
+    },
+    {
+      "service_data_uuid": "0000fcd2-0000-1000-8000-00805f9b34fb",
+      "connectable": true
     }
   ]
 }

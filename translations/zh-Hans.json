@@ -30,6 +30,7 @@
       "name": "显示自定义内容",
       "description": "通过 BLE GATT 向 PVVX Mi Thermometer 写入自定义显示（大/小数字与图标）. 与 BTHome 共存，不创建传感器实体.",
       "fields": {
+        "device": { "name": "设备", "description": "目标 BLE 设备." },
         "address": { "name": "设备地址", "description": "目标设备的 BLE MAC 地址." },
         "big_number": { "name": "大数字", "description": "LCD 主显示数字（内部按 x10 编码，如 23.5 → 235）." },
         "small_number": { "name": "小数字", "description": "辅助数字（如湿度）." },
@@ -40,6 +41,14 @@
         "percent": { "name": "百分号", "description": "为小数字显示百分号." },
         "battery": { "name": "电池图标", "description": "显示电池图标." },
         "validity": { "name": "显示时长（秒）", "description": "自定义内容保持显示的时间长度." }
+      }
+    },
+    "sync_time": {
+      "name": "同步时间",
+      "description": "同步 Home Assistant 时间到 PVVX 显示设备（通过 BLE）.",
+      "fields": {
+        "address": { "name": "设备地址", "description": "目标设备的 BLE MAC 地址." },
+        "device": { "name": "设备", "description": "目标 BLE 设备." }
       }
     }
   },
